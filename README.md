@@ -1,5 +1,4 @@
 # 🏥 AI-Powered Real-Time ICU Patient Monitoring System
-**IIT Patna Capstone-I Project | Triple-Engine AI Architecture**
 
 ## 🚀 Overview
 An advanced healthcare monitoring solution that uses Machine Learning and Deep Learning to predict patient risk levels in real-time. Unlike traditional threshold-based systems, this project analyzes multivariate sensor data to provide early warnings for cardiac events.
@@ -26,7 +25,7 @@ Our system operates on a multi-layered validation logic:
 - **Backend/Web:** Flask/FastAPI (Work in Progress by Varun)
 - **IoT:** Arduino/ESP32 (Work in Progress by Vishal & Suhani)
 
-## 👥 Team Members & Contributions
+## 👥 Team Members & Contributions (*IIT Patna : Capstone Project - II*)
 - **Shivam Gupta (Lead):** Data Cleaning Pipeline & XGBoost Risk Model.
 - **Shanya Gupta:** LSTM Predictive Analytics & Anomaly Detection.
 - **Varun Gupta:** Web Dashboard & API Integration.
