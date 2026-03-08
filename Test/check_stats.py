@@ -13,13 +13,13 @@ stats = pd.DataFrame()
 stats['Mean'] = df[vitals].mean()
 stats['Median'] = df[vitals].median()
 
-# Difference Calculation (Agar Mean bada hai toh positive aayega)
+# Difference Calculation (positive if mean is greater)
 stats['Difference'] = stats['Mean'] - stats['Median']
 
-# Skewness check (Zero ke paas hona chahiye)
+# Skewness check (Approx zero)
 stats['Skewness'] = df[vitals].skew()
 
 print("--- SHANYA'S CHECKLIST ---")
 print(stats)
 
-# Logic: Agar Difference 1-2 se zyada hai, toh cleaning ki zaroorat hai
+# Logic: If Difference is more than 1-2,then cleaning is required
