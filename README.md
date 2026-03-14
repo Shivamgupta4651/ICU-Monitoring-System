@@ -26,7 +26,7 @@ Our system operates on a multi-layered validation logic:
 - **IoT:** Arduino/ESP32 (Work in Progress by Vishal & Suhani)
 
 ## 👥 Team Members & Contributions (*IIT Patna : Capstone Project - II*)
-- **Shivam Gupta (Lead):** Data Cleaning Pipeline & XGBoost Risk Model.
+- **Shivam Gupta:** Data Cleaning Pipeline & XGBoost Risk Model.
 - **Shanya Gupta:** LSTM Predictive Analytics & Anomaly Detection.
 - **Varun Gupta:** Web Dashboard & API Integration.
 - **Vishal & Suhani Gupta:** IoT Sensor Hardware & Cloud Data Flow.
