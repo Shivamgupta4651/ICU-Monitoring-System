@@ -27,6 +27,6 @@ Our system operates on a multi-layered validation logic:
 
 ## 👥 Team Members & Contributions (*IIT Patna : Capstone Project - II*)
 - **Shivam Gupta:** Data Cleaning Pipeline & XGBoost Risk Model.
-- **Shanya Gupta:** LSTM Predictive Analytics & Anomaly Detection.
+- **Sanya Gupta:** LSTM Predictive Analytics & Anomaly Detection.
 - **Varun Gupta:** Web Dashboard & API Integration.
 - **Vishal & Suhani Gupta:** IoT Sensor Hardware & Cloud Data Flow.
