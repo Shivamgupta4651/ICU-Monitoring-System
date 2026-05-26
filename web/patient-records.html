@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Records - VitalSync AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { navy: { 900: '#0a0e1a', 800: '#0f1629', 700: '#151d35', 600: '#1a2442' }, cyan: { 400: '#22d3ee', 500: '#06b6d4' }, emerald: { 400: '#34d399', 500: '#10b981' } } } } }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #0f1629; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #1a2442; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-navy-900 text-gray-100 min-h-screen">
+    
+    <div class="flex h-screen overflow-hidden">
+        
+        <aside class="w-72 bg-navy-800 border-r border-navy-600 flex flex-col">
+            <div class="p-6 border-b border-navy-600">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-emerald-400 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-navy-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </div>
+                    <div><span class="text-xl font-bold text-white">VitalSync</span><span class="text-xs text-cyan-400 block">Doctor Portal</span></div>
+                </a>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-thin">
+                <a href="doctor-portal.html" id="link-dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-navy-700 hover:text-white transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span class="font-medium">Multi-Patient View</span>
+                </a>
+                <a href="patient-records.html" id="link-records" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-navy-700 hover:text-white transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span class="font-medium">Patient Records</span>
+                </a>
+                <div class="border-t border-navy-600 my-4"></div>
+                <a href="support.html" id="link-support" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-navy-700 hover:text-cyan-400 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="font-medium">Help & Support</span>
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-navy-600">
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-navy-700/50">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 flex items-center justify-center text-navy-900 font-bold">DR</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-white truncate" id="sideDocName">Loading...</p>
+                        <p class="text-xs text-cyan-400 font-mono mt-0.5 truncate" id="sideDocId">--</p>
+                    </div>
+                    <button onclick="logout()" class="p-2 rounded-lg hover:bg-navy-600 text-red-400 transition-all" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="flex-1 flex flex-col overflow-hidden bg-navy-900">
+            <header class="bg-navy-800/80 backdrop-blur-sm border-b border-navy-600 px-6 py-4 sticky top-0 z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Medical Report Directory
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-1">Search and view saved Incident Reports</p>
+                    </div>
+                    <div class="ml-auto flex items-center gap-3">
+                        <div class="relative w-80">
+                            <svg class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="text" id="directorySearchInput" placeholder="Search report contents globally..." class="w-full bg-navy-800 rounded-xl px-12 py-3 border border-navy-600 text-white placeholder-gray-500 outline-none focus:border-cyan-500/50 transition-colors">
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="flex-1 flex overflow-hidden">
+                <div class="w-72 border-r border-navy-600 overflow-y-auto bg-navy-800/50 p-4 space-y-2 scrollbar-thin" id="groupedPatientsListPane">
+                    <p class="text-gray-500 text-sm">Loading patients...</p>
+                </div>
+                
+                <div class="flex-1 flex flex-col p-6 bg-navy-900 overflow-y-auto scrollbar-thin relative">
+                    <div id="ptReportContentPanel" class="hidden h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-4 border-b border-navy-700 pb-4">
+                            <h4 class="text-xl font-bold text-white flex items-center gap-2" id="reportActiveViewTitle"></h4>
+                            <span id="recordCountText" class="text-xs text-gray-500 font-mono"></span>
+                        </div>
+                        <div id="reportListContent" class="flex-1 space-y-4"></div>
+                    </div>
+                    <div id="directoryPlaceholder" class="absolute inset-0 flex items-center justify-center text-gray-500 flex-col gap-4 text-center p-8">
+                        <svg class="w-16 h-16 text-navy-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Select a patient from the list on the left to view their specific reports.<br>
+                        Use the search bar to search globally across all medical data.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:8000'; 
+
+        //SIDEBAR 
+        function initializeSidebar() {
+            const docName = sessionStorage.getItem('doctorName');
+            const token = sessionStorage.getItem('token');
+            if (docName) { document.getElementById('sideDocName').textContent = "Dr. " + docName; }
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    document.getElementById('sideDocId').textContent = payload.user_id;
+                } catch (e) { console.error(e); }
+            } else { window.location.href = "doctor-login.html"; }
+
+            const pageHighlightMap = {
+                'doctor-portal.html': 'link-dashboard',
+                'patient-records.html': 'link-records',
+                'support.html': 'link-support'
+            };
+
+            const currentPage = window.location.pathname.split("/").pop() || 'doctor-portal.html';
+            const activeLinkId = pageHighlightMap[currentPage];
+
+            if (activeLinkId && document.getElementById(activeLinkId)) {
+                document.getElementById(activeLinkId).className = "flex items-center gap-3 px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30";
+            }
+        }
+        function logout() { sessionStorage.clear(); window.location.href = 'doctor-login.html'; }
+        initializeSidebar();
+
+        //PATIENT RECORDS
+        let allReportsArray = []; 
+        let patientMap = {}; 
+
+        async function fetchReportsDirectory() {
+            const listDiv = document.getElementById('groupedPatientsListPane');
+            const token = sessionStorage.getItem('token');
+            listDiv.innerHTML = '<p class="text-cyan-400 p-2 text-sm animate-pulse">Fetching records...</p>';
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/reports/doctor`, { headers: { 'Authorization': `Bearer ${token}` } });
+                allReportsArray = await response.json();
+                
+                if(allReportsArray.length === 0) { listDiv.innerHTML = '<p class="text-gray-500 p-2 text-sm">No reports have been generated yet.</p>'; return; }
+                
+                
+                allReportsArray.forEach(r => patientMap[r.patient_id] = `${r.first_name} ${r.last_name}`);
+                renderPatientButtonsPane();
+            } catch(e) { listDiv.innerHTML = '<p class="text-red-400 p-2 text-sm italic">Error loading reports.</p>'; }
+        }
+
+        function renderPatientButtonsPane() {
+            const listDiv = document.getElementById('groupedPatientsListPane');
+            const uniquePatients = [];
+            const patientIdsFound = new Set();
+
+            allReportsArray.forEach(r => {
+                if(!patientIdsFound.has(r.patient_id)) {
+                    patientIdsFound.add(r.patient_id);
+                    uniquePatients.push({id: r.patient_id, name: `${r.first_name} ${r.last_name}`});
+                }
+            });
+
+            listDiv.innerHTML = uniquePatients.map(p => {
+                const initials = p.name.substring(0,2).toUpperCase();
+                return `
+                <button class="w-full flex items-center gap-3 p-3 rounded-lg bg-navy-900 border border-white/5 cursor-pointer hover:border-cyan-500/50 hover:bg-navy-700/50 transition-all text-left" 
+                        onclick="selectPatientInDirectory('${p.id}')">
+                    <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 font-bold text-sm flex-shrink-0">${initials}</div>
+                    <div class="min-w-0">
+                        <p class="text-white font-medium text-sm truncate">${p.name}</p>
+                        <p class="text-gray-400 text-xs mt-1 truncate font-mono">ID: ${p.id}</p>
+                    </div>
+                </button>`;
+            }).join('');
+        }
+
+        function selectPatientInDirectory(patientId) {
+            document.getElementById('directoryPlaceholder').classList.add('hidden');
+            document.getElementById('ptReportContentPanel').classList.remove('hidden');
+
+            const patientName = patientMap[patientId];
+            const initials = patientName.substring(0,2).toUpperCase();
+
+            document.getElementById('reportActiveViewTitle').innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 font-bold text-sm">${initials}</div>
+                <span>${patientName} <span class="text-gray-500 text-sm font-normal ml-2 font-mono">(${patientId})</span></span>
+            `;
+
+            const filteredReports = allReportsArray.filter(r => r.patient_id === patientId);
+            document.getElementById('recordCountText').textContent = `Showing ${filteredReports.length} records`;
+            renderReportCards(filteredReports);
+        }
+
+        function renderReportCards(reportsToRender) {
+            const listDiv = document.getElementById('reportListContent');
+            if(reportsToRender.length === 0) { listDiv.innerHTML = '<p class="text-gray-500 p-2 text-sm">No records found matching criteria.</p>'; return; }
+
+            listDiv.innerHTML = reportsToRender.map(r => {
+                const dateStr = new Date(r.timestamp.replace(' ', 'T') + 'Z').toLocaleString();
+                const escapedText = r.report_text.replace(/\\/g, '\\\\').replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+                return `
+                    <div class="p-4 bg-navy-800 border border-navy-600 rounded-2xl flex flex-col gap-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-cyan-400 font-medium">${dateStr}</span>
+                            <span class="text-gray-500 font-mono bg-navy-900 px-2 py-1 rounded">Incident Report</span>
+                        </div>
+                        <textarea readonly class="w-full bg-navy-900/50 border border-navy-700 rounded-xl p-4 text-emerald-400 font-mono text-sm resize-none focus:outline-none h-60 scrollbar-thin">${r.report_text}</textarea>
+                        <div class="flex justify-end pt-1">
+                            <button onclick="downloadSpecificReport('${escapedText}', '${patientMap[r.patient_id]} (${dateStr})')" class="text-xs bg-cyan-500/20 text-cyan-400 px-4 py-2 rounded-lg font-bold hover:bg-cyan-500/30 transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download .TXT
+                            </button>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        document.getElementById('directorySearchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            if (!query) {
+                document.getElementById('directoryPlaceholder').classList.remove('hidden');
+                document.getElementById('ptReportContentPanel').classList.add('hidden');
+                return;
+            }
+            const matchedReports = allReportsArray.filter(r => r.report_text.toLowerCase().includes(query) || r.first_name.toLowerCase().includes(query));
+            document.getElementById('directoryPlaceholder').classList.add('hidden');
+            document.getElementById('ptReportContentPanel').classList.remove('hidden');
+            document.getElementById('reportActiveViewTitle').innerHTML = `<svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg> Global Search Results`;
+            document.getElementById('recordCountText').textContent = `Found ${matchedReports.length} matches`;
+            renderReportCards(matchedReports);
+        });
+
+        function downloadSpecificReport(text, filenamePrefix) {
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `${filenamePrefix.replace(/[^a-z0-9]/gi, '_')}.txt`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        fetchReportsDirectory();
+    </script>
+</body>
+</html>

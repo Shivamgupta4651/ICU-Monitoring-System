@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Portal - VitalSync AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 900: '#0a0e1a', 800: '#0f1629', 700: '#151d35', 600: '#1a2442' },
+                        cyan: { 400: '#22d3ee', 500: '#06b6d4' },
+                        emerald: { 400: '#34d399', 500: '#10b981' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glow-emerald { box-shadow: 0 0 20px rgba(52, 211, 153, 0.3); }
+        .glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+        .vitals-pulse { animation: vitalsPulse 2s ease-in-out infinite; }
+        @keyframes vitalsPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .heartbeat { animation: heartbeat 1s ease-in-out infinite; }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    </style>
+</head>
+<body class="min-h-screen bg-navy-900 text-white">
+    <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-navy-900/90 backdrop-blur-xl">
+        <div class="flex h-16 items-center justify-between px-4 lg:px-8">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-2">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-emerald-500">
+                        <svg class="h-5 w-5 text-navy-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold">VitalSync<span class="text-emerald-400">AI</span></span>
+                </a>
+                <span class="hidden sm:block text-sm text-gray-500">|</span>
+                <span class="hidden sm:block text-sm text-emerald-400">Patient Portal</span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2 text-sm">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" id="connectionDot"></span>
+                    <span class="text-gray-400" id="connectionText">Connected</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 rounded-lg bg-navy-700 px-3 py-2">
+                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-navy-900 font-bold text-sm" id="userInitials">PT</div>
+                        <div class="hidden sm:block">
+                            <p class="text-sm font-medium text-white" id="headerName">Loading...</p>
+                            <p class="text-xs text-gray-500" id="headerId">PT-XXXX</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-24 pb-8 px-4 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-2xl lg:text-3xl font-bold text-white" id="welcomeText">Welcome back</h1>
+                <p class="text-gray-400 mt-1">Here's your health overview for today</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div id="statusCard" class="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-transparent p-6 glow-emerald transition-all">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm text-gray-400">AI Analysis Status</span>
+                        <span id="statusBadge" class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">Awaiting Data</span>
+                    </div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div id="statusIconBg" class="h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-xl">🤖</span></div>
+                        <div><p id="statusText" class="text-2xl font-bold text-white">Monitoring...</p><p id="statusDesc" class="text-sm text-gray-400">Connecting to sensors</p></div>
+                    </div>
+                    <div class="pt-3 border-t border-white/5 flex justify-between items-center text-xs">
+                        <span class="text-gray-400">Cardiac Risk Score: <span id="ptRiskScore" class="font-bold text-white">--%</span></span>
+                        <span class="text-gray-400">Sensors: <span id="ptSensorCheck" class="font-bold text-white">--</span></span>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-transparent p-6">
+                    <div class="flex items-center justify-between mb-4"><span class="text-sm text-gray-400">Your Doctor</span><span class="h-2 w-2 rounded-full bg-cyan-400"></span></div>
+                    <div class="flex items-center gap-3">
+                        <div class="h-12 w-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold">DR</div>
+                        <div><p class="font-semibold text-white" id="docName">Loading...</p><p class="text-sm text-gray-400">Assigned Specialist</p><p class="text-xs text-cyan-400 mt-1" id="docId">DR-XXXX</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-white">Current Vitals</h2>
+                    <div class="flex items-center gap-2 text-sm text-gray-400"><svg class="h-4 w-4 text-emerald-400 vitals-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg><span>Live</span></div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="rounded-2xl border border-white/10 bg-navy-800 p-5">
+                        <div class="flex items-center justify-between mb-3"><span class="text-sm text-gray-400">Heart Rate</span><svg class="h-5 w-5 text-red-400 heartbeat" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                        <p class="text-3xl font-bold text-white font-mono" id="patient-hr">--</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-navy-800 p-5">
+                        <div class="flex items-center justify-between mb-3"><span class="text-sm text-gray-400">Oxygen (SpO2)</span><span class="text-xl text-cyan-400">O₂</span></div>
+                        <p class="text-3xl font-bold text-white font-mono" id="patient-spo2">--<span class="text-lg">%</span></p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-navy-800 p-5">
+                        <div class="flex items-center justify-between mb-3"><span class="text-sm text-gray-400">Temperature</span><span class="text-xl text-amber-400">🌡️</span></div>
+                        <p class="text-3xl font-bold text-white font-mono" id="patient-temp">--<span class="text-lg">°C</span></p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-navy-800 p-5">
+                        <div class="flex items-center justify-between mb-3"><span class="text-sm text-gray-400">Blood Pressure</span><span class="text-xl text-purple-400">❤️</span></div>
+                        <p class="text-3xl font-bold text-white font-mono" id="patient-bp">--/--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-navy-800 p-6">
+                <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Emergency Contacts</h2>
+                        <p class="text-xs text-gray-400 mt-1">These contacts will be automatically notified if AI detects a critical event.</p>
+                    </div>
+                    <button onclick="document.getElementById('contactModal').classList.remove('hidden')" class="bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-all">+ Add Contact</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="contactsList"><p class="text-gray-500 text-sm italic">Loading contacts...</p></div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="openPatientReportsModal()" class="p-4 rounded-2xl border border-white/10 bg-navy-800 hover:border-emerald-500/50 transition-all text-center">
+                    <svg class="h-6 w-6 text-emerald-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span class="text-sm text-gray-300">View Reports</span>
+                </button>
+                <a href="patient-support.html" class="p-4 rounded-2xl border border-white/10 bg-navy-800 hover:border-emerald-500/50 transition-all text-center group block">
+                    <svg class="h-6 w-6 text-emerald-400 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="text-sm text-gray-300 group-hover:text-white">Help & Support</span>
+                </a>
+                <button onclick="logout()" class="p-4 rounded-2xl border border-white/10 bg-navy-800 hover:border-red-500/50 transition-all text-center group">
+                    <svg class="h-6 w-6 text-red-400 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    <span class="text-sm text-gray-300 group-hover:text-white">Sign Out</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div id="contactModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/80 backdrop-blur-sm px-4">
+        <div class="w-full max-w-md rounded-2xl border border-white/10 bg-navy-800 p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-white">Add Emergency Contact</h3>
+                <button onclick="document.getElementById('contactModal').classList.add('hidden')" class="text-gray-400 hover:text-white text-xl">&times;</button>
+            </div>
+            <form id="addContactForm" class="space-y-4">
+                <div><label class="text-xs text-gray-400 mb-1 block">Full Name</label><input type="text" id="c-name" required class="w-full bg-navy-900 border border-white/10 rounded-lg px-4 py-2 text-white outline-none focus:border-cyan-500"></div>
+                <div><label class="text-xs text-gray-400 mb-1 block">Relation</label><input type="text" id="c-relation" required class="w-full bg-navy-900 border border-white/10 rounded-lg px-4 py-2 text-white outline-none focus:border-cyan-500"></div>
+                <div><label class="text-xs text-gray-400 mb-1 block">Mobile Number</label><input type="tel" id="c-phone" required class="w-full bg-navy-900 border border-white/10 rounded-lg px-4 py-2 text-white outline-none focus:border-cyan-500"></div>
+                <div><label class="text-xs text-gray-400 mb-1 block">Email Address</label><input type="email" id="c-email" required class="w-full bg-navy-900 border border-white/10 rounded-lg px-4 py-2 text-white outline-none focus:border-cyan-500"></div>
+                <button type="submit" class="w-full mt-4 bg-cyan-500 hover:bg-cyan-400 text-navy-900 font-bold py-3 rounded-lg transition-colors">Save Contact</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="patientReportsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/90 backdrop-blur-sm px-4">
+        <div class="w-full max-w-4xl h-[80vh] flex flex-col rounded-2xl border border-white/10 bg-navy-800 shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-navy-600 bg-navy-900">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    My Medical Incident Reports
+                </h3>
+                <button onclick="document.getElementById('patientReportsModal').classList.add('hidden')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="flex-1 flex overflow-hidden">
+                <div class="w-1/3 border-r border-navy-600 overflow-y-auto bg-navy-800/50 p-4 space-y-2" id="myReportsList">
+                    <p class="text-gray-500 text-sm">Loading generated reports...</p>
+                </div>
+                
+                <div class="flex-1 p-6 bg-navy-900 overflow-y-auto relative">
+                    <div id="ptReportContentArea" class="hidden h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-lg font-bold text-white" id="ptReportViewTitle">Report Details</h4>
+                            <button onclick="downloadPtReport()" class="text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded hover:bg-emerald-500/30 transition-colors">Download .TXT</button>
+                        </div>
+                        <textarea id="ptReportTextArea" readonly class="flex-1 w-full bg-navy-800 border border-navy-600 rounded-xl p-4 text-emerald-400 font-mono text-sm resize-none focus:outline-none"></textarea>
+                    </div>
+                    <div id="ptReportPlaceholder" class="absolute inset-0 flex items-center justify-center text-gray-500">
+                        Select a report from the list to view contents.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:8000';
+
+        async function loadProfile() {
+            const token = sessionStorage.getItem('token');
+            if(!token) { window.location.href = 'patient-login.html'; return; }
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/patient/me`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if(!res.ok) throw new Error("Not logged in");
+                const data = await res.json();
+                
+                const pt = data.patient_info;
+                document.getElementById('headerName').textContent = `${pt.first_name} ${pt.last_name}`;
+                document.getElementById('welcomeText').textContent = `Welcome back, ${pt.first_name}`;
+                document.getElementById('headerId').textContent = pt.id;
+                document.getElementById('userInitials').textContent = pt.first_name[0] + pt.last_name[0];
+                document.getElementById('docName').textContent = pt.doc_name;
+                document.getElementById('docId').textContent = pt.assigned_doctor_id;
+
+                updateDashboard(data.vitals);
+                fetchContacts();
+
+            } catch(e) { console.error(e); logout(); }
+        }
+
+        async function fetchLiveVitals() {
+            const token = sessionStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/patient/me`, { headers: { 'Authorization': `Bearer ${token}` }});
+                const data = await res.json();
+                updateDashboard(data.vitals);
+            } catch(e) { console.error(e); }
+        }
+
+        function updateDashboard(vitals) {
+            if (!vitals) return;
+
+            document.getElementById('patient-hr').textContent = vitals.hr;
+            document.getElementById('patient-spo2').innerHTML = `${vitals.spo2}<span class="text-lg">%</span>`;
+            document.getElementById('patient-temp').innerHTML = `${vitals.temp}<span class="text-lg">°C</span>`;
+            document.getElementById('patient-bp').textContent = `${vitals.sys}/${vitals.dia}`;
+
+            const card = document.getElementById('statusCard');
+            const badge = document.getElementById('statusBadge');
+            const txt = document.getElementById('statusText');
+            const desc = document.getElementById('statusDesc');
+            
+            document.getElementById('ptRiskScore').textContent = vitals.risk_score || '--%';
+            const sensorEl = document.getElementById('ptSensorCheck');
+            sensorEl.textContent = vitals.sensor_check || 'Checking...';
+            
+            if(vitals.sensor_check && vitals.sensor_check.includes('ABNORMAL')) { sensorEl.className = "font-bold text-orange-400"; } 
+            else { sensorEl.className = "font-bold text-emerald-400"; }
+
+            if (vitals.status === 'CRITICAL') {
+                card.className = "rounded-2xl border border-red-500/50 bg-red-500/10 p-6 glow-red transition-all";
+                badge.className = "px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-bold animate-pulse"; badge.textContent = "CRITICAL ALERT";
+                txt.className = "text-2xl font-bold text-red-400"; txt.textContent = "Immediate Attention"; desc.textContent = vitals.cardiac_pred;
+                document.getElementById('ptRiskScore').className = "font-bold text-red-400";
+            } else if (vitals.cardiac_pred && vitals.cardiac_pred.includes('HIGH ALERT')) {
+                card.className = "rounded-2xl border border-yellow-500/50 bg-yellow-500/10 p-6 transition-all";
+                badge.className = "px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-bold"; badge.textContent = "WARNING";
+                txt.className = "text-2xl font-bold text-yellow-400"; txt.textContent = "Trend Declining"; desc.textContent = vitals.cardiac_pred;
+                document.getElementById('ptRiskScore').className = "font-bold text-yellow-400";
+            } else {
+                card.className = "rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-transparent p-6 glow-emerald transition-all";
+                badge.className = "px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium"; badge.textContent = "Stable";
+                txt.className = "text-2xl font-bold text-white"; txt.textContent = "Good"; desc.textContent = "All vitals normal";
+                document.getElementById('ptRiskScore').className = "font-bold text-emerald-400";
+            }
+        }
+
+        async function fetchContacts() {
+            const token = sessionStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/patient/contacts`, { headers: { 'Authorization': `Bearer ${token}` }});
+                const contacts = await res.json();
+                const list = document.getElementById('contactsList');
+                if(contacts.length === 0) { list.innerHTML = `<p class="text-gray-500 text-sm italic col-span-2">No emergency contacts added yet.</p>`; return; }
+                list.innerHTML = contacts.map(c => `
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-navy-700 border border-white/5">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold">${c.name.substring(0,2).toUpperCase()}</div>
+                            <div><p class="font-medium text-white">${c.name}</p><p class="text-xs text-gray-400">${c.relation} | ${c.phone}</p></div>
+                        </div>
+                    </div>`).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        document.getElementById('addContactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = sessionStorage.getItem('token');
+            const payload = { name: document.getElementById('c-name').value, relation: document.getElementById('c-relation').value, phone: document.getElementById('c-phone').value, email: document.getElementById('c-email').value };
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/patient/contacts`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if(res.ok) { document.getElementById('addContactForm').reset(); document.getElementById('contactModal').classList.add('hidden'); fetchContacts(); }
+            } catch(e) { console.error("Failed to save contact", e); }
+        });
+
+       
+        async function openPatientReportsModal() {
+            document.getElementById('patientReportsModal').classList.remove('hidden');
+            document.getElementById('patientReportsModal').classList.add('flex');
+            const listDiv = document.getElementById('myReportsList');
+            listDiv.innerHTML = '<p class="text-emerald-400 p-2 text-sm animate-pulse">Fetching records...</p>';
+            
+            const token = sessionStorage.getItem('token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/reports/patient`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const reports = await response.json();
+                
+                if(reports.length === 0) {
+                    listDiv.innerHTML = '<p class="text-gray-500 p-2 text-sm">No reports have been issued yet.</p>';
+                    return;
+                }
+
+                listDiv.innerHTML = reports.map(r => {
+                    const escapedText = r.report_text.replace(/\\/g, '\\\\').replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+                    const dateStr = new Date(r.timestamp.replace(' ', 'T') + 'Z').toLocaleString();
+                    return `
+                    <div class="p-3 bg-navy-900 border border-white/5 rounded-lg cursor-pointer hover:border-emerald-500/50 transition-colors" 
+                         onclick="viewPtReportDetail('${dateStr}', '${r.doc_fn} ${r.doc_ln}', '${escapedText}')">
+                        <p class="text-white font-medium text-sm">Incident Report</p>
+                        <p class="text-gray-400 text-xs mt-1">Issued by Dr. ${r.doc_fn} ${r.doc_ln}</p>
+                        <p class="text-emerald-400 text-[10px] mt-2">${dateStr}</p>
+                    </div>`;
+                }).join('');
+            } catch(e) {
+                listDiv.innerHTML = '<p class="text-red-400 p-2 text-sm">Error loading reports.</p>';
+            }
+        }
+
+        function viewPtReportDetail(date, docName, text) {
+            document.getElementById('ptReportPlaceholder').classList.add('hidden');
+            document.getElementById('ptReportContentArea').classList.remove('hidden');
+            document.getElementById('ptReportViewTitle').textContent = `Report (${date})`;
+            document.getElementById('ptReportTextArea').value = text;
+        }
+
+        function downloadPtReport() {
+            const text = document.getElementById('ptReportTextArea').value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `My_Medical_Report.txt`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function logout() { sessionStorage.clear(); window.location.href = 'patient-login.html'; }
+
+        loadProfile(); setInterval(fetchLiveVitals, 3000);
+    </script>
+</body>
+</html>

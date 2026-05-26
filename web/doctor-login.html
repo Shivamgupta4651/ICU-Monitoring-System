@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Login - VitalSync AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { 900: '#0a0e1a', 800: '#0f1629', 700: '#151d35', 600: '#1a2542' },
+            cyan: { 400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2' },
+            emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .glow-cyan { box-shadow: 0 0 30px rgba(6, 182, 212, 0.4); }
+    .glow-emerald { box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+    .input-glow:focus { box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2); }
+    .gradient-border {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(16, 185, 129, 0.3));
+      padding: 1px;
+      border-radius: 1rem;
+    }
+    .gradient-border-inner {
+      background: #0f1629;
+      border-radius: calc(1rem - 1px);
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(6, 182, 212, 0.5); }
+    }
+    .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+  </style>
+</head>
+<body class="min-h-screen bg-navy-900 text-white antialiased">
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/4 -left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMjI4M2EiIGZpbGwtb3BhY2l0eT0iMC4yIj48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnY0em0wLTZ2LTRoLTJ2NGgyek0zNCAyNGgydjJoLTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40"></div>
+  </div>
+
+  <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-navy-900/80 backdrop-blur-xl">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-emerald-500">
+          <svg class="h-5 w-5 text-navy-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+        </div>
+        <span class="text-xl font-bold">VitalSync<span class="text-cyan-400">AI</span></span>
+      </a>
+      <a href="patient-login.html" class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-2 text-sm font-medium text-navy-900 transition-all hover:from-emerald-400 hover:to-emerald-500">
+        Patient Portal
+      </a>
+    </div>
+  </header>
+
+  <main class="relative z-10 flex min-h-screen items-center justify-center px-4 pt-20 pb-12">
+    <div class="w-full max-w-md">
+      <div class="gradient-border">
+        <div class="gradient-border-inner p-8">
+          <div class="mb-8 text-center">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-cyan-500/10 pulse-glow">
+              <svg class="h-8 w-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-white">Doctor Portal</h1>
+            <p class="mt-2 text-sm text-gray-400">Access your ICU monitoring dashboard</p>
+          </div>
+
+          <div class="mb-6 flex rounded-lg bg-navy-900 p-1">
+            <button id="signinTab" onclick="showSignIn()" class="flex-1 rounded-md py-2.5 text-sm font-medium transition-all bg-cyan-500/20 text-cyan-400">Sign In</button>
+            <button id="signupTab" onclick="showSignUp()" class="flex-1 rounded-md py-2.5 text-sm font-medium transition-all text-gray-400 hover:text-white">Sign Up</button>
+          </div>
+
+          <form id="signinForm" class="space-y-5">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-300">Email Address</label>
+              <input type="email" id="loginEmail" required placeholder="doctor@hospital.com" class="w-full rounded-lg border border-white/10 bg-navy-900 py-3 px-4 text-white placeholder-gray-500 transition-all input-glow focus:border-cyan-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-300">Password</label>
+              <div class="relative">
+                <input type="password" id="loginPassword" required placeholder="Enter your password" class="w-full rounded-lg border border-white/10 bg-navy-900 py-3 pl-4 pr-12 text-white placeholder-gray-500 transition-all input-glow focus:border-cyan-500 focus:outline-none">
+              </div>
+            </div>
+            <button type="submit" class="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 py-3 font-semibold text-navy-900 transition-all hover:from-cyan-400 hover:to-cyan-500 glow-cyan">
+              Sign In to Dashboard
+            </button>
+          </form>
+
+          <form id="signupForm" class="hidden space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="mb-2 block text-sm font-medium text-gray-300">First Name</label>
+                <input type="text" id="firstName" required placeholder="John" class="w-full rounded-lg border border-white/10 bg-navy-900 py-3 px-4 text-white placeholder-gray-500 transition-all input-glow focus:border-cyan-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="mb-2 block text-sm font-medium text-gray-300">Last Name</label>
+                <input type="text" id="lastName" required placeholder="Smith" class="w-full rounded-lg border border-white/10 bg-navy-900 py-3 px-4 text-white placeholder-gray-500 transition-all input-glow focus:border-cyan-500 focus:outline-none">
+              </div>
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-300">Email Address</label>
+              <input type="email" id="signupEmail" required placeholder="doctor@hospital.com" class="w-full rounded-lg border border-white/10 bg-navy-900 py-3 px-4 text-white placeholder-gray-500 transition-all input-glow focus:border-cyan-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-300">Specialization</label>
+              <select id="specialization" required class="w-full rounded-lg border border-white/10 bg-navy-900 py-3 px-4 text-white transition-all input-glow focus:border-cyan-500 focus:outline-none">
+                <option value="intensivist">Intensivist / Critical Care</option>
+                <option value="general">General Physician</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-300">Create Password</label>
+              <input type="password" id="signupPassword" required placeholder="Min 8 characters" class="w-full rounded-lg border border-white/10 bg-navy-900 py-3 px-4 text-white placeholder-gray-500 transition-all input-glow focus:border-cyan-500 focus:outline-none">
+            </div>
+            <button type="submit" class="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 py-3 font-semibold text-navy-900 transition-all hover:from-cyan-400 hover:to-cyan-500 glow-cyan">
+              Create Doctor Account
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+      <p class="mt-6 text-center text-sm text-gray-500">
+        <a href="index.html" class="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300">Back to Home</a>
+      </p>
+    </div>
+  </main>
+
+  <div id="successModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/80 backdrop-blur-sm">
+    <div class="mx-4 w-full max-w-md gradient-border">
+      <div class="gradient-border-inner p-8 text-center">
+        <h2 class="text-2xl font-bold text-white mb-2">Account Created!</h2>
+        <p class="text-gray-400">Your unique Doctor ID has been generated</p>
+        <div class="my-6 rounded-lg border border-cyan-500/30 bg-cyan-500/10 p-4">
+          <p id="generatedDoctorId" class="mt-1 text-2xl font-bold text-cyan-400">DR-XXXX-XXXX</p>
+          <p class="mt-2 text-xs text-gray-500">Share this ID with your patients for assignment</p>
+        </div>
+        <button onclick="window.location.href='doctor-portal.html'" class="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 py-3 font-semibold text-navy-900 glow-cyan">
+          Go to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+
+    function showSignIn() {
+      document.getElementById('signinForm').classList.remove('hidden');
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('signinTab').classList.add('bg-cyan-500/20', 'text-cyan-400');
+      document.getElementById('signinTab').classList.remove('text-gray-400');
+      document.getElementById('signupTab').classList.remove('bg-cyan-500/20', 'text-cyan-400');
+      document.getElementById('signupTab').classList.add('text-gray-400');
+    }
+
+    function showSignUp() {
+      document.getElementById('signinForm').classList.add('hidden');
+      document.getElementById('signupForm').classList.remove('hidden');
+      document.getElementById('signupTab').classList.add('bg-cyan-500/20', 'text-cyan-400');
+      document.getElementById('signupTab').classList.remove('text-gray-400');
+      document.getElementById('signinTab').classList.remove('bg-cyan-500/20', 'text-cyan-400');
+      document.getElementById('signinTab').classList.add('text-gray-400');
+    }
+
+    // BACKEND SIGN UP
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const doctorId = 'DR-' + Math.random().toString(36).substr(2, 4).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+      
+      const payload = {
+        id: doctorId,
+        first_name: document.getElementById('firstName').value,
+        last_name: document.getElementById('lastName').value,
+        email: document.getElementById('signupEmail').value,
+        password: document.getElementById('signupPassword').value,
+        spec: document.getElementById('specialization').value
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/register-doctor`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        
+        if(response.ok) {
+         
+          sessionStorage.setItem('token', data.token);
+          sessionStorage.setItem('doctorName', payload.first_name + ' ' + payload.last_name);
+          
+          document.getElementById('generatedDoctorId').textContent = data.doctorId;
+          document.getElementById('successModal').classList.remove('hidden');
+          document.getElementById('successModal').classList.add('flex');
+        } else {
+          alert("Registration Failed: " + (data.detail || data.message));
+        }
+      } catch(err) {
+        console.error(err);
+        alert("Cannot connect to server. Ensure your FastAPI Python backend is running.");
+      }
+    });
+
+// BACKEND SIGN IN
+    document.getElementById('signinForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const payload = {
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPassword').value
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/login-doctor`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        
+        if(response.ok) {
+          sessionStorage.setItem('token', data.token);
+         
+          sessionStorage.setItem('doctorName', data.doctorName); 
+          
+          window.location.href = 'doctor-portal.html';
+        } else {
+          alert("Invalid Email or Password");
+        }
+      } catch(err) {
+        console.error(err);
+        alert("Cannot connect to server. Ensure your FastAPI Python backend is running.");
+      }
+    });
+  </script>
+</body>
+</html>

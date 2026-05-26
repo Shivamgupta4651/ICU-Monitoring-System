@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Login - VitalSync AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { navy: { 900: '#0a0e1a', 800: '#0f1629', 700: '#151d35', 600: '#1a2542' }, cyan: { 400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2' }, emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669' } } } } }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .input-glow:focus { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+    .gradient-border { background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 182, 212, 0.3)); padding: 1px; border-radius: 1rem; }
+    .gradient-border-inner { background: #0f1629; border-radius: calc(1rem - 1px); }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); } 50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.5); } }
+    .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+  </style>
+</head>
+<body class="min-h-screen bg-navy-900 text-white antialiased">
+  <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-navy-900/80 backdrop-blur-xl">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+      <a href="index.html" class="text-xl font-bold">VitalSync<span class="text-cyan-400">AI</span></a>
+      <a href="doctor-login.html" class="text-sm font-medium text-cyan-400">Doctor Portal</a>
+    </div>
+  </header>
+
+  <main class="relative z-10 flex min-h-screen items-center justify-center px-4 pt-20 pb-12">
+    <div class="w-full max-w-md gradient-border">
+      <div class="gradient-border-inner p-8">
+        <div class="mb-8 text-center">
+          <h1 class="text-2xl font-bold text-white">Patient Portal</h1>
+        </div>
+
+        <div class="mb-6 flex rounded-lg bg-navy-900 p-1">
+          <button id="signinTab" onclick="showSignIn()" class="flex-1 rounded-md py-2.5 text-sm font-medium bg-emerald-500/20 text-emerald-400">Sign In</button>
+          <button id="signupTab" onclick="showSignUp()" class="flex-1 rounded-md py-2.5 text-sm font-medium text-gray-400">Sign Up</button>
+        </div>
+
+        <form id="signinForm" class="space-y-5">
+          <input type="email" id="loginEmail" required placeholder="Email" class="w-full rounded-lg bg-navy-900 py-3 px-4 text-white border border-white/10 input-glow focus:border-emerald-500 focus:outline-none">
+          <input type="password" id="loginPassword" required placeholder="Password" class="w-full rounded-lg bg-navy-900 py-3 px-4 text-white border border-white/10 input-glow focus:border-emerald-500 focus:outline-none">
+          <button type="submit" class="w-full rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 py-3 font-semibold text-navy-900">Sign In</button>
+        </form>
+
+        <form id="signupForm" class="hidden space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <input type="text" id="firstName" required placeholder="First Name" class="w-full rounded-lg bg-navy-900 py-3 px-4 border border-white/10 input-glow focus:border-emerald-500 outline-none">
+            <input type="text" id="lastName" required placeholder="Last Name" class="w-full rounded-lg bg-navy-900 py-3 px-4 border border-white/10 input-glow focus:border-emerald-500 outline-none">
+          </div>
+          <input type="email" id="signupEmail" required placeholder="Email" class="w-full rounded-lg bg-navy-900 py-3 px-4 border border-white/10 input-glow focus:border-emerald-500 outline-none">
+          
+          <div class="grid grid-cols-2 gap-4">
+            <input type="number" id="age" required placeholder="Age" class="w-full rounded-lg bg-navy-900 py-3 px-4 border border-white/10 input-glow outline-none">
+            <select id="gender" required class="w-full rounded-lg bg-navy-900 py-3 px-4 border border-white/10 input-glow outline-none text-white">
+              <option value="1">Male</option>
+              <option value="0">Female</option>
+            </select>
+          </div>
+
+          <input type="text" id="doctorId" required placeholder="Assigned Doctor ID (DR-XXXX)" class="w-full rounded-lg bg-navy-900 py-3 px-4 border border-white/10 input-glow outline-none uppercase">
+          <input type="password" id="signupPassword" required placeholder="Password" class="w-full rounded-lg bg-navy-900 py-3 px-4 border border-white/10 input-glow outline-none">
+          
+          <button type="submit" class="w-full rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 py-3 font-semibold text-navy-900">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <div id="successModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/80 backdrop-blur-sm">
+    <div class="mx-4 w-full max-w-md gradient-border">
+      <div class="gradient-border-inner p-8 text-center">
+        <h2 class="text-2xl font-bold text-white">Account Created!</h2>
+        <div class="my-6 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
+          <p class="text-sm text-gray-400">Your Patient ID</p>
+          <p id="generatedPatientId" class="mt-1 text-xl font-bold text-emerald-400">PT-XXXX-XXXX</p>
+        </div>
+        <button onclick="window.location.href='patient-portal.html'" class="w-full rounded-lg bg-emerald-500 py-3 font-semibold text-navy-900">Go to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://127.0.0.1:8000'; 
+
+    function showSignIn() {
+      document.getElementById('signinForm').classList.remove('hidden');
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('signinTab').classList.add('bg-emerald-500/20', 'text-emerald-400');
+      document.getElementById('signupTab').classList.remove('bg-emerald-500/20', 'text-emerald-400');
+    }
+
+    function showSignUp() {
+      document.getElementById('signinForm').classList.add('hidden');
+      document.getElementById('signupForm').classList.remove('hidden');
+      document.getElementById('signupTab').classList.add('bg-emerald-500/20', 'text-emerald-400');
+      document.getElementById('signinTab').classList.remove('bg-emerald-500/20', 'text-emerald-400');
+    }
+
+    // SIGN UP
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const patientId = 'PT-' + Math.random().toString(36).substr(2, 4).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+      
+      const payload = {
+        id: patientId,
+        assigned_doctor_id: document.getElementById('doctorId').value.toUpperCase(),
+        first_name: document.getElementById('firstName').value,
+        last_name: document.getElementById('lastName').value,
+        email: document.getElementById('signupEmail').value,
+        password: document.getElementById('signupPassword').value,
+        age: parseInt(document.getElementById('age').value),
+        gender: parseInt(document.getElementById('gender').value)
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/register-patient`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await response.json();
+        if(response.ok) {
+          sessionStorage.setItem('token', data.token);
+          document.getElementById('generatedPatientId').textContent = data.patientId;
+          document.getElementById('successModal').classList.remove('hidden');
+          document.getElementById('successModal').classList.add('flex');
+        } else { alert(data.detail); }
+      } catch(err) { alert("Server error"); }
+    });
+
+    // SIGN IN
+    document.getElementById('signinForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const payload = {
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPassword').value
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/login-patient`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await response.json();
+        if(response.ok) {
+          sessionStorage.setItem('token', data.token);
+          window.location.href = 'patient-portal.html';
+        } else { alert("Invalid credentials"); }
+      } catch(err) { alert("Server error"); }
+    });
+  </script>
+</body>
+</html>
